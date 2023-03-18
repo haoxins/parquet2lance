@@ -1,0 +1,9 @@
+[package]
+name = "parquet2lance"
+version = "0.0.0"
+edition = "2021"
+
+[dependencies]
+clap = "4"
+datafusion = "20"
+lance = "0.3"
