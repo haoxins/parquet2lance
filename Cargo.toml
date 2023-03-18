@@ -1,9 +1,14 @@
 [package]
 name = "parquet2lance"
-version = "0.0.0"
+version = "0.1.0"
 edition = "2021"
+description = "Convert parquet file to lance format."
+license-file = "LICENSE"
 
 [dependencies]
-clap = "4"
-datafusion = "20"
-lance = "0.3"
+clap = { version = "4", features = ["derive"] }
+arrow = { version = "35", features = ["prettyprint"]}
+tokio = { version = "1", features = ["full"] }
+arrow-array = "35"
+lance = { git = "https://github.com/eto-ai/lance.git" }
+parquet = "35"
