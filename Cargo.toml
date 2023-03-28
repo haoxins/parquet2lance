@@ -1,14 +1,15 @@
 [package]
 name = "parquet2lance"
-version = "0.1.0"
+version = "0.0.2"
 edition = "2021"
 description = "Convert parquet file to lance format."
+repository = "https://github.com/haoxins/parquet2lance"
 license-file = "LICENSE"
 
 [dependencies]
+arrow = { version = "33.0", features = ["prettyprint"] }
+arrow-array = "33.0"
 clap = { version = "4", features = ["derive"] }
-arrow = { version = "35", features = ["prettyprint"]}
+lance = "0.3.19"
+parquet = "33"
 tokio = { version = "1", features = ["full"] }
-arrow-array = "35"
-lance = { git = "https://github.com/eto-ai/lance.git" }
-parquet = "35"

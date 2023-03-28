@@ -1,0 +1,31 @@
+name: Rust
+
+on:
+  push:
+    branches:
+    - main
+    tags:
+    - "v*"
+  pull_request:
+    branches:
+    - main
+
+env:
+  CARGO_TERM_COLOR: always
+  RUSTFLAGS: "-Dwarnings"
+
+jobs:
+  clippy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run Clippy
+        run: cargo clippy --all-targets --all-features
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Test
+      run: cargo test
+    - name: Build
+      run: cargo build --release

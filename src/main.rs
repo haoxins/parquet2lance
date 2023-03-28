@@ -32,7 +32,7 @@ async fn main() {
 
     let file = File::open(args.file).unwrap();
 
-    let mut write_params = WriteParams::default();
+    let write_params = WriteParams::default();
     let mut reader: Box<dyn RecordBatchReader> = Box::new(
         ParquetRecordBatchReaderBuilder::try_new(file)
             .unwrap()
