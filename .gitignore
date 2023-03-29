@@ -1,4 +1,5 @@
 target
+testdata
 
 *.parquet
 *.rs.bk

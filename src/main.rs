@@ -13,7 +13,7 @@ struct Args {
     file: std::path::PathBuf,
 
     #[arg(short, long)]
-    output: std::path::PathBuf,
+    output_dir: std::path::PathBuf,
 
     #[arg(short, long)]
     verbose: bool,
@@ -43,7 +43,7 @@ async fn main() {
 
     Dataset::write(
         &mut reader,
-        args.output.to_str().unwrap(),
+        args.output_dir.to_str().unwrap(),
         Some(write_params),
     )
     .await

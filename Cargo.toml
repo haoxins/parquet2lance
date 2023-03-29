@@ -1,6 +1,6 @@
 [package]
 name = "parquet2lance"
-version = "0.0.2"
+version = "0.0.3"
 edition = "2021"
 description = "Convert parquet file to lance format."
 repository = "https://github.com/haoxins/parquet2lance"
