@@ -28,57 +28,76 @@ struct Args {
 async fn main() {
     let args = Args::parse();
 
-    if args.input.is_file() {
-        p2l(&vec![args.input], &args.output_dir, args.overwrite).await;
-        return;
-    }
-
-    if args.input.is_dir() {
-        let mut dir = read_dir(&args.input).unwrap();
-
-        let mut paths = vec![];
-        while let Some(Ok(entry)) = dir.next() {
-            if entry.path().is_file() {
-                paths.push(entry.path());
-            }
-        }
-
-        p2l(&paths, &args.output_dir, args.overwrite).await;
-        return;
-    }
-
-    panic!("Input path is neither a file nor a directory");
+    let files = get_input_files(&args.input);
+    p2l(&files, &args.output_dir, args.overwrite).await;
 }
 
 async fn p2l(paths: &Vec<PathBuf>, output_dir: &PathBuf, overwrite: bool) {
     let mut initialized = false;
 
     for p in paths {
-        let file = File::open(p).unwrap();
-        let mut reader: Box<dyn RecordBatchReader> = Box::new(
-            ParquetRecordBatchReaderBuilder::try_new(file)
-                .unwrap()
-                .with_batch_size(8192)
-                .build()
-                .unwrap(),
-        );
+        let mut reader: Box<dyn RecordBatchReader> = read_file(p);
 
         let output_dir = output_dir.to_str().unwrap();
 
-        let mut write_params = WriteParams::default();
-        if !initialized {
-            initialized = true;
-            write_params.mode = if overwrite {
-                WriteMode::Overwrite
-            } else {
-                WriteMode::Create
-            };
-        } else {
-            write_params.mode = WriteMode::Append;
-        }
+        let write_params = get_write_params(initialized, overwrite);
 
         Dataset::write(&mut reader, output_dir, Some(write_params))
             .await
             .unwrap();
+
+        initialized = true;
     }
+}
+
+fn read_file(file_path: &PathBuf) -> Box<dyn RecordBatchReader> {
+    let file = File::open(file_path).unwrap();
+
+    Box::new(
+        ParquetRecordBatchReaderBuilder::try_new(file)
+            .unwrap()
+            .with_batch_size(8192)
+            .build()
+            .unwrap(),
+    )
+}
+
+fn get_input_files(input: &PathBuf) -> Vec<PathBuf> {
+    let mut files = vec![];
+
+    if input.is_file() {
+        files.push(input.clone());
+        return files;
+    }
+
+    if input.is_dir() {
+        let mut dir = read_dir(input).unwrap();
+        while let Some(Ok(entry)) = dir.next() {
+            // We don't handle directories yet
+            if entry.path().is_file() {
+                files.push(entry.path());
+            }
+        }
+
+        return files;
+    }
+
+    panic!("Input path is neither a file nor a directory");
+}
+
+fn get_write_params(initialized: bool, overwrite: bool) -> WriteParams {
+    let mut params = WriteParams::default();
+
+    if !initialized {
+        params.mode = if overwrite {
+            WriteMode::Overwrite
+        } else {
+            WriteMode::Create
+        };
+        return params;
+    }
+
+    params.mode = WriteMode::Append;
+
+    params
 }
