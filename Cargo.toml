@@ -1,8 +1,8 @@
 [package]
 name = "parquet2lance"
-version = "0.0.5"
+version = "0.1.0"
 edition = "2021"
-description = "Convert parquet file to lance format."
+description = "Convert parquet files to lance"
 repository = "https://github.com/haoxins/parquet2lance"
 license-file = "LICENSE"
 keywords = ["parquet", "lance"]

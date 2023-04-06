@@ -11,16 +11,16 @@ use std::path::PathBuf;
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
 struct Args {
-    #[arg(short, long)]
+    #[arg(short, long, help = "Input file or directory")]
     input: PathBuf,
 
-    #[arg(short, long)]
+    #[arg(short, long, help = "Output directory")]
     output_dir: PathBuf,
 
-    #[arg(short, long)]
+    #[arg(short = 'O', long, help = "Overwrite output directory")]
     overwrite: bool,
 
-    #[arg(short, long)]
+    #[arg(long, help = "Print internal logs")]
     verbose: bool,
 }
 

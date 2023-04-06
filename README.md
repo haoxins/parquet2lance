@@ -8,12 +8,22 @@
 [![CI Badge]][CI]
 [![crates.io badge]][crates.io]
 
-Convert parquet to lance.
+Convert parquet files to [lance](https://github.com/eto-ai/lance)
 
 ```zsh
 $ cargo install parquet2lance
+```
 
-$ parquet2lance \
-  --file ./testdata/alltypes_plain.parquet \
-  --output-dir ./testdata/alltypes_plain
+```
+Convert parquet files to lance
+
+Usage: parquet2lance [OPTIONS] --input <INPUT> --output-dir <OUTPUT_DIR>
+
+Options:
+  -i, --input <INPUT>            Input file or directory
+  -o, --output-dir <OUTPUT_DIR>  Output directory
+  -O, --overwrite                Overwrite output directory
+      --verbose                  Print internal logs
+  -h, --help                     Print help
+  -V, --version                  Print version
 ```
