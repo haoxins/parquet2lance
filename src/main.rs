@@ -1,11 +1,11 @@
-use arrow_array::RecordBatchReader;
 use clap::Parser;
 use lance::dataset::Dataset;
 use lance::dataset::{WriteMode, WriteParams};
 
 use std::path::PathBuf;
 
-mod fs;
+use io::reader::Reader;
+mod io;
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
@@ -27,21 +27,23 @@ struct Args {
 async fn main() {
     let args = Args::parse();
 
-    let files = fs::get_input_files(&args.input);
-    p2l(&files, &args.output_dir, args.overwrite).await;
+    let reader = Reader::new(&args.input);
+    p2l(reader, &args.output_dir, args.overwrite).await;
 }
 
-async fn p2l(paths: &Vec<PathBuf>, output_dir: &PathBuf, overwrite: bool) {
+async fn p2l(mut reader: Reader, output_dir: &PathBuf, mut overwrite: bool) {
     let mut initialized = false;
 
-    for p in paths {
-        let mut reader: Box<dyn RecordBatchReader> = fs::read_file(p);
+    if !output_dir.exists() {
+        overwrite = false;
+    }
 
+    while let Some(mut f) = reader.next() {
         let output_dir = output_dir.to_str().unwrap();
 
         let write_params = get_write_params(initialized, overwrite);
 
-        Dataset::write(&mut reader, output_dir, Some(write_params))
+        Dataset::write(&mut f, output_dir, Some(write_params))
             .await
             .unwrap();
 

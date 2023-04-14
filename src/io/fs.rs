@@ -17,7 +17,7 @@ pub fn read_file(file_path: &PathBuf) -> Box<dyn RecordBatchReader> {
     )
 }
 
-pub fn get_input_files(input: &PathBuf) -> Vec<PathBuf> {
+pub fn get_file_list(input: &PathBuf) -> Vec<PathBuf> {
     let mut files = vec![];
 
     if input.is_file() {
