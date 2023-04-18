@@ -3,6 +3,7 @@ use arrow_array::RecordBatchReader;
 use std::path::PathBuf;
 
 use super::fs;
+use super::gcs;
 
 #[derive(PartialEq)]
 enum FileScheme {
@@ -16,11 +17,11 @@ pub struct Reader {
 }
 
 impl Reader {
-    pub fn new(path: &PathBuf) -> Self {
+    pub async fn new(path: &PathBuf) -> Self {
         if path.starts_with("gs://") {
             return Self {
                 scheme: FileScheme::GCS,
-                file_list: vec![],
+                file_list: gcs::get_file_list(path).await,
             };
         }
 
@@ -30,7 +31,7 @@ impl Reader {
         }
     }
 
-    pub fn next(&mut self) -> Option<Box<dyn RecordBatchReader>> {
+    pub async fn next(&mut self) -> Option<Box<dyn RecordBatchReader>> {
         if self.file_list.is_empty() {
             return None;
         }
@@ -38,7 +39,7 @@ impl Reader {
         let p = self.file_list.remove(0);
 
         if self.scheme == FileScheme::GCS {
-            println!("TODO");
+            return Some(gcs::read_file(&p).await);
         }
 
         Some(fs::read_file(&p))

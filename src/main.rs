@@ -27,7 +27,7 @@ struct Args {
 async fn main() {
     let args = Args::parse();
 
-    let reader = Reader::new(&args.input);
+    let reader = Reader::new(&args.input).await;
     p2l(reader, &args.output_dir, args.overwrite).await;
 }
 
@@ -38,7 +38,7 @@ async fn p2l(mut reader: Reader, output_dir: &PathBuf, mut overwrite: bool) {
         overwrite = false;
     }
 
-    while let Some(mut f) = reader.next() {
+    while let Some(mut f) = reader.next().await {
         let output_dir = output_dir.to_str().unwrap();
 
         let write_params = get_write_params(initialized, overwrite);
