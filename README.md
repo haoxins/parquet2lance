@@ -27,3 +27,9 @@ Options:
   -h, --help                     Print help
   -V, --version                  Print version
 ```
+
+```
+parquet2lance \
+  -i gs://cloud-samples-data/bigquery/us-states/us-states.parquet \
+  -o testdata/us-states.lance -O
+```

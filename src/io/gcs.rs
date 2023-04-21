@@ -7,9 +7,16 @@ use parquet::arrow::arrow_reader::ParquetRecordBatchReaderBuilder;
 use std::path::PathBuf;
 use std::sync::Arc;
 
+use crate::io::util::get_bucket_name;
+
 pub async fn read_file(file_path: &PathBuf) -> Box<dyn RecordBatchReader> {
-    let gcs: Arc<dyn ObjectStore> =
-        Arc::new(GoogleCloudStorageBuilder::from_env().build().unwrap());
+    let bucket_name = get_bucket_name(file_path).unwrap();
+    let gcs: Arc<dyn ObjectStore> = Arc::new(
+        GoogleCloudStorageBuilder::from_env()
+            .with_bucket_name(bucket_name)
+            .build()
+            .unwrap(),
+    );
 
     let p = file_path.clone().into_os_string().into_string().unwrap();
     let object = gcs.get(&ObjectStorePath::parse(p).unwrap()).await.unwrap();
@@ -26,9 +33,14 @@ pub async fn read_file(file_path: &PathBuf) -> Box<dyn RecordBatchReader> {
 
 pub async fn get_file_list(prefix: &PathBuf) -> Vec<PathBuf> {
     let p: ObjectStorePath = prefix.to_str().unwrap().try_into().unwrap();
+    let bucket_name = get_bucket_name(prefix).unwrap();
 
-    let gcs: Arc<dyn ObjectStore> =
-        Arc::new(GoogleCloudStorageBuilder::from_env().build().unwrap());
+    let gcs: Arc<dyn ObjectStore> = Arc::new(
+        GoogleCloudStorageBuilder::from_env()
+            .with_bucket_name(bucket_name)
+            .build()
+            .unwrap(),
+    );
 
     let results = gcs
         .list(Some(&p))
