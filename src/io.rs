@@ -1,4 +1,5 @@
-pub mod fs;
-pub mod gcs;
 pub mod reader;
+
+mod fs;
+mod gcs;
 mod util;
