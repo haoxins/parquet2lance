@@ -1,3 +1,5 @@
+#![feature(async_fn_in_trait)]
+
 use clap::Parser;
 use lance::dataset::Dataset;
 use lance::dataset::{WriteMode, WriteParams};
@@ -27,16 +29,12 @@ struct Args {
 async fn main() {
     let args = Args::parse();
 
-    let reader = Reader::new(&args.input).await;
+    let reader = Reader::new(&args.input, args.verbose).await;
     p2l(reader, &args.output_dir, args.overwrite).await;
 }
 
-async fn p2l(mut reader: Reader, output_dir: &PathBuf, mut overwrite: bool) {
+async fn p2l(mut reader: Reader, output_dir: &PathBuf, overwrite: bool) {
     let mut initialized = false;
-
-    if !output_dir.exists() {
-        overwrite = false;
-    }
 
     while let Some(mut f) = reader.next().await {
         let output_dir = output_dir.to_str().unwrap();

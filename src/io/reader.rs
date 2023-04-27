@@ -11,37 +11,31 @@ enum FileScheme {
     GCS,
 }
 
+pub trait StorageReader {
+    async fn next(&mut self) -> Option<Box<dyn RecordBatchReader>>;
+}
+
 pub struct Reader {
     scheme: FileScheme,
-    file_list: Vec<PathBuf>,
+    storage_reader: dyn StorageReader,
 }
 
 impl Reader {
-    pub async fn new(path: &PathBuf) -> Self {
+    pub async fn new(path: &PathBuf, verbose: bool) -> Self {
         if path.starts_with("gs://") {
             return Self {
                 scheme: FileScheme::GCS,
-                file_list: gcs::get_file_list(path).await,
+                storage_reader: gcs::GcsReader::new(path, verbose).await,
             };
         }
 
         Self {
             scheme: FileScheme::FS,
-            file_list: fs::get_file_list(path),
+            storage_reader: fs::FsReader::new(path, verbose),
         }
     }
 
     pub async fn next(&mut self) -> Option<Box<dyn RecordBatchReader>> {
-        if self.file_list.is_empty() {
-            return None;
-        }
-
-        let p = self.file_list.remove(0);
-
-        if self.scheme == FileScheme::GCS {
-            return Some(gcs::read_file(&p).await);
-        }
-
-        Some(fs::read_file(&p))
+        self.storage_reader().next().await
     }
 }

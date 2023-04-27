@@ -28,6 +28,10 @@ Options:
   -V, --version                  Print version
 ```
 
+- Working with GCS
+  - Using `gcloud auth application-default login` to generate
+    Application Default Credentials (ADC)
+
 ```
 parquet2lance \
   -i gs://cloud-samples-data/bigquery/us-states/us-states.parquet \
