@@ -25,7 +25,7 @@ impl GcsReader {
 }
 
 impl StorageReader for GcsReader {
-    async fn next(mut self) -> Option<Box<dyn RecordBatchReader>> {
+    async fn next(&mut self) -> Option<Box<dyn RecordBatchReader>> {
         if self.file_list.is_empty() {
             return None;
         }

@@ -22,12 +22,15 @@ impl FsReader {
 }
 
 impl StorageReader for FsReader {
-    async fn next(mut self) -> Option<Box<dyn RecordBatchReader>> {
+    async fn next(&mut self) -> Option<Box<dyn RecordBatchReader>> {
         if self.file_list.is_empty() {
             return None;
         }
 
         let file_path = self.file_list.remove(0);
+        if self.verbose {
+            println!("Reading file {:?}", &file_path);
+        }
         let file = File::open(file_path).unwrap();
 
         let r = Box::new(

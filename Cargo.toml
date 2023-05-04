@@ -8,11 +8,11 @@ license-file = "LICENSE"
 keywords = ["parquet", "lance", "object_store", "gcs"]
 
 [dependencies]
-arrow = { version = "33.0", features = ["prettyprint"] }
-arrow-array = "33.0"
+arrow = { version = "37.0", features = ["prettyprint"] }
+arrow-array = "37.0"
 clap = { version = "4", features = ["derive"] }
 futures = "0.3"
 lance = "0.4.3"
 object_store = { version = "0.5", features = ["aws", "gcp"] }
-parquet = "33"
+parquet = "37"
 tokio = { version = "1", features = ["full"] }

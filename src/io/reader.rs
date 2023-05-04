@@ -17,7 +17,8 @@ pub trait StorageReader {
 
 pub struct Reader {
     scheme: FileScheme,
-    storage_reader: dyn StorageReader,
+    fs_reader: Option<fs::FsReader>,
+    gcs_reader: Option<gcs::GcsReader>,
 }
 
 impl Reader {
@@ -25,17 +26,22 @@ impl Reader {
         if path.starts_with("gs://") {
             return Self {
                 scheme: FileScheme::GCS,
-                storage_reader: gcs::GcsReader::new(path, verbose).await,
+                fs_reader: None,
+                gcs_reader: Some(gcs::GcsReader::new(path, verbose).await),
             };
         }
 
         Self {
             scheme: FileScheme::FS,
-            storage_reader: fs::FsReader::new(path, verbose),
+            fs_reader: Some(fs::FsReader::new(path, verbose)),
+            gcs_reader: None,
         }
     }
 
     pub async fn next(&mut self) -> Option<Box<dyn RecordBatchReader>> {
-        self.storage_reader().next().await
+        match self.scheme {
+            FileScheme::FS => self.fs_reader.as_mut().unwrap().next().await,
+            FileScheme::GCS => self.gcs_reader.as_mut().unwrap().next().await,
+        }
     }
 }
