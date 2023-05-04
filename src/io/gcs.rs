@@ -7,7 +7,9 @@ use parquet::arrow::arrow_reader::ParquetRecordBatchReaderBuilder;
 use std::path::PathBuf;
 use std::sync::Arc;
 
-use crate::io::util::{get_bucket_name, get_object_prefix};
+use crate::io::util::{
+    get_bucket_name, get_object_path, get_object_prefix, is_parquet_object_path,
+};
 use crate::io::StorageReader;
 
 pub struct GcsReader {
@@ -70,6 +72,11 @@ impl StorageReader for GcsReader {
 
 pub async fn get_file_list(p: &PathBuf, verbose: bool) -> Vec<PathBuf> {
     let bucket_name = get_bucket_name(p).unwrap();
+
+    if is_parquet_object_path(p) {
+        return vec![get_object_path(p).unwrap()];
+    }
+
     let prefix = get_object_prefix(p).unwrap();
     let client = get_gcs_client(&bucket_name);
 
