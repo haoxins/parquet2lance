@@ -32,8 +32,16 @@ Options:
   - Using `gcloud auth application-default login` to generate
     Application Default Credentials (ADC)
 
-```
+```zsh
 parquet2lance \
   -i gs://cloud-samples-data/bigquery/us-states/us-states.parquet \
-  -o testdata/us-states.lance -O
+  -o test.lance -O
+```
+
+- Working with local FS
+
+```zsh
+gsutil cp gs://cloud-samples-data/bigquery/us-states/us-states.parquet test.parquet
+
+parquet2lance -i test.parquet -o test.lance -O
 ```
