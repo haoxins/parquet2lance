@@ -7,11 +7,12 @@ use parquet::arrow::arrow_reader::ParquetRecordBatchReaderBuilder;
 use std::path::PathBuf;
 use std::sync::Arc;
 
-use crate::io::reader::StorageReader;
-use crate::io::util::get_bucket_name;
+use crate::io::util::{get_bucket_name, get_object_prefix};
+use crate::io::StorageReader;
 
 pub struct GcsReader {
     verbose: bool,
+    bucket_name: String,
     file_list: Vec<PathBuf>,
 }
 
@@ -19,6 +20,7 @@ impl GcsReader {
     pub async fn new(path: &PathBuf, verbose: bool) -> Self {
         Self {
             verbose,
+            bucket_name: get_bucket_name(path).unwrap(),
             file_list: get_file_list(path, verbose).await,
         }
     }
@@ -32,8 +34,7 @@ impl StorageReader for GcsReader {
 
         let file_path = self.file_list.remove(0);
 
-        let bucket_name = get_bucket_name(&file_path).unwrap();
-        let client = get_gcs_client(bucket_name);
+        let client = get_gcs_client(&self.bucket_name);
 
         if self.verbose {
             println!("Reading GCS object {:?}", &file_path);
@@ -46,42 +47,72 @@ impl StorageReader for GcsReader {
             .unwrap();
         let data = object.bytes().await.unwrap();
 
-        let r = ParquetRecordBatchReaderBuilder::try_new(data)
+        if self.verbose {
+            println!("Read GCS object {:?}", &file_path);
+        }
+
+        let result = ParquetRecordBatchReaderBuilder::try_new(data)
             .unwrap()
             .with_batch_size(8192)
-            .build()
-            .unwrap();
+            .build();
 
-        Some(Box::new(r))
+        match result {
+            Ok(v) => Some(Box::new(v)),
+            Err(e) => {
+                if self.verbose {
+                    println!("Failed to read GCS object {:?}, {}", &file_path, e);
+                }
+                return None;
+            }
+        }
     }
 }
 
-pub async fn get_file_list(prefix: &PathBuf, verbose: bool) -> Vec<PathBuf> {
-    let p: ObjectStorePath = prefix.to_str().unwrap().try_into().unwrap();
-    let bucket_name = get_bucket_name(prefix).unwrap();
-    let client = get_gcs_client(bucket_name);
+pub async fn get_file_list(p: &PathBuf, verbose: bool) -> Vec<PathBuf> {
+    let bucket_name = get_bucket_name(p).unwrap();
+    let prefix = get_object_prefix(p).unwrap();
+    let client = get_gcs_client(&bucket_name);
 
     if verbose {
-        println!("Getting GCS object list from {}", &p);
+        println!("Getting GCS objects from {}", &prefix);
     }
 
-    let results = client.list(Some(&p)).await.unwrap().map(|meta| {
-        let p = meta.unwrap().location.to_string();
+    let objects = client.list(Some(&prefix)).await.unwrap();
+
+    let objects = objects.map(|meta| {
+        let meta = meta.unwrap();
+        let p = meta.location.to_string();
+        let ignored = !p.ends_with(".parquet") || meta.size == 0;
+
         if verbose {
-            println!("Converting parquet file {}", &p);
+            println!("Found file {}, ignored {}", &p, &ignored);
         }
-        PathBuf::from(p)
+
+        match ignored {
+            true => PathBuf::from(""),
+            false => PathBuf::from(p),
+        }
     });
 
-    results.collect().await
+    let objects: Vec<PathBuf> = objects.collect().await;
+    let objects: Vec<PathBuf> = objects
+        .into_iter()
+        .filter(|p| !p.to_str().unwrap().is_empty())
+        .collect();
+
+    if verbose {
+        println!("Found {} files", &objects.len());
+    }
+
+    objects
 }
 
-fn get_gcs_client(bucket_name: String) -> Arc<dyn ObjectStore> {
+fn get_gcs_client(bucket_name: &String) -> Arc<dyn ObjectStore> {
     let builder = GoogleCloudStorageBuilder::from_env()
         .with_bucket_name(bucket_name)
         .build();
 
-    let client: Arc<dyn ObjectStore> = match builder {
+    let client = match builder {
         Ok(client) => Arc::new(client),
         Err(e) => panic!("Failed to create GCS client, {}", e),
     };

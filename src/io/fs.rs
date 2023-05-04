@@ -5,7 +5,7 @@ use std::fs::read_dir;
 use std::fs::File;
 use std::path::PathBuf;
 
-use crate::io::reader::StorageReader;
+use crate::io::StorageReader;
 
 pub struct FsReader {
     verbose: bool,

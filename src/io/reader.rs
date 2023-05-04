@@ -4,15 +4,12 @@ use std::path::PathBuf;
 
 use super::fs;
 use super::gcs;
+use crate::io::StorageReader;
 
 #[derive(PartialEq)]
 enum FileScheme {
     FS,
     GCS,
-}
-
-pub trait StorageReader {
-    async fn next(&mut self) -> Option<Box<dyn RecordBatchReader>>;
 }
 
 pub struct Reader {

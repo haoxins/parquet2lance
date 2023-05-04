@@ -34,7 +34,7 @@ Options:
 
 ```zsh
 parquet2lance \
-  -i gs://cloud-samples-data/bigquery/us-states/us-states.parquet \
+  -i gs://cloud-samples-data/bigquery/us-states/ \
   -o test.lance -O
 ```
 
