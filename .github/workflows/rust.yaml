@@ -12,4 +12,4 @@ on:
 
 jobs:
   CI:
-    uses: haoxins/github-workflows/.github/workflows/go-test.yaml@main
+    uses: haoxins/github-workflows/.github/workflows/rust-ci.yaml@main
