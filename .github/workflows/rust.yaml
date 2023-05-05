@@ -11,5 +11,5 @@ on:
     - main
 
 jobs:
-  CI:
-    uses: haoxins/github-workflows/.github/workflows/rust-ci.yaml@main
+  test:
+    uses: haoxins/github-workflows/.github/workflows/rust-test.yaml@main
