@@ -9,7 +9,7 @@ use crate::io::StorageReader;
 #[derive(PartialEq)]
 enum FileScheme {
     FS,
-    GCS,
+    Gcs,
 }
 
 pub struct Reader {
@@ -22,7 +22,7 @@ impl Reader {
     pub async fn new(path: &PathBuf, verbose: bool) -> Self {
         if path.starts_with("gs://") {
             return Self {
-                scheme: FileScheme::GCS,
+                scheme: FileScheme::Gcs,
                 fs_reader: None,
                 gcs_reader: Some(gcs::GcsReader::new(path, verbose).await),
             };
@@ -38,7 +38,7 @@ impl Reader {
     pub async fn next(&mut self) -> Option<Box<dyn RecordBatchReader>> {
         match self.scheme {
             FileScheme::FS => self.fs_reader.as_mut().unwrap().next().await,
-            FileScheme::GCS => self.gcs_reader.as_mut().unwrap().next().await,
+            FileScheme::Gcs => self.gcs_reader.as_mut().unwrap().next().await,
         }
     }
 }
