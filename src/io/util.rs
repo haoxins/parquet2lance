@@ -1,8 +1,8 @@
 use object_store::path::Path as ObjectStorePath;
 
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
-pub fn get_bucket_name(p: &PathBuf) -> Option<String> {
+pub fn get_bucket_name(p: &Path) -> Option<String> {
     let p = p.to_str().unwrap();
     let p = p.split("://").collect::<Vec<&str>>();
 
@@ -11,7 +11,7 @@ pub fn get_bucket_name(p: &PathBuf) -> Option<String> {
     }
 
     Some(
-        p[1].split("/")
+        p[1].split('/')
             .collect::<Vec<&str>>()
             .first()
             .unwrap()
@@ -19,7 +19,7 @@ pub fn get_bucket_name(p: &PathBuf) -> Option<String> {
     )
 }
 
-pub fn get_object_path(p: &PathBuf) -> Option<PathBuf> {
+pub fn get_object_path(p: &Path) -> Option<PathBuf> {
     let p = p.to_str().unwrap();
     let p = p.split("://").collect::<Vec<&str>>();
 
@@ -27,7 +27,7 @@ pub fn get_object_path(p: &PathBuf) -> Option<PathBuf> {
         return None;
     }
 
-    let p = p[1].split("/").collect::<Vec<&str>>();
+    let p = p[1].split('/').collect::<Vec<&str>>();
 
     if p.len() == 1 {
         return None;
@@ -38,7 +38,7 @@ pub fn get_object_path(p: &PathBuf) -> Option<PathBuf> {
     Some(PathBuf::from(p))
 }
 
-pub fn get_object_prefix(p: &PathBuf) -> Option<ObjectStorePath> {
+pub fn get_object_prefix(p: &Path) -> Option<ObjectStorePath> {
     let p = p.to_str().unwrap();
     let p = p.split("://").collect::<Vec<&str>>();
 
@@ -46,7 +46,7 @@ pub fn get_object_prefix(p: &PathBuf) -> Option<ObjectStorePath> {
         return None;
     }
 
-    let dirs = p[1].split("/").collect::<Vec<&str>>();
+    let dirs = p[1].split('/').collect::<Vec<&str>>();
 
     let size = dirs.len();
 
@@ -59,7 +59,7 @@ pub fn get_object_prefix(p: &PathBuf) -> Option<ObjectStorePath> {
     Some(ObjectStorePath::from(prefix))
 }
 
-pub fn is_parquet_object_path(p: &PathBuf) -> bool {
+pub fn is_parquet_object_path(p: &Path) -> bool {
     let p = p.to_str().unwrap();
     p.ends_with(".parquet") && p.starts_with("gs://")
 }
@@ -110,25 +110,20 @@ mod util_tests {
 
     #[test]
     fn test_is_parquet_object_path() {
-        assert_eq!(
-            is_parquet_object_path(&PathBuf::from("gs://public-data/parquet/a.parquet")),
-            true
-        );
-        assert_eq!(
-            is_parquet_object_path(&PathBuf::from("gs://public-data/parquet")),
-            false
-        );
-        assert_eq!(
-            is_parquet_object_path(&PathBuf::from("/public-data/parquet/a.parquet")),
-            false
-        );
-        assert_eq!(
-            is_parquet_object_path(&PathBuf::from("/public-data/parquet")),
-            false
-        );
-        assert_eq!(
-            is_parquet_object_path(&PathBuf::from("/public-data/parquet/a.proto")),
-            false
-        );
+        assert!(is_parquet_object_path(&PathBuf::from(
+            "gs://public-data/parquet/a.parquet"
+        )));
+        assert!(!is_parquet_object_path(&PathBuf::from(
+            "gs://public-data/parquet"
+        )));
+        assert!(!is_parquet_object_path(&PathBuf::from(
+            "/public-data/parquet/a.parquet"
+        )));
+        assert!(!is_parquet_object_path(&PathBuf::from(
+            "/public-data/parquet"
+        )));
+        assert!(!is_parquet_object_path(&PathBuf::from(
+            "/public-data/parquet/a.proto"
+        )));
     }
 }

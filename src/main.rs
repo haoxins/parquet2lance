@@ -4,7 +4,7 @@ use clap::Parser;
 use lance::dataset::Dataset;
 use lance::dataset::{WriteMode, WriteParams};
 
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 
 use io::reader::Reader;
 mod io;
@@ -33,7 +33,7 @@ async fn main() {
     p2l(reader, &args.output_dir, args.overwrite).await;
 }
 
-async fn p2l(mut reader: Reader, output_dir: &PathBuf, overwrite: bool) {
+async fn p2l(mut reader: Reader, output_dir: &Path, overwrite: bool) {
     let mut initialized = false;
 
     while let Some(mut f) = reader.next().await {

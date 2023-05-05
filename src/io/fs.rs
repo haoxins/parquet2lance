@@ -62,5 +62,5 @@ fn get_file_list(input: &PathBuf) -> Vec<PathBuf> {
         }
     }
 
-    return file_list;
+    file_list
 }

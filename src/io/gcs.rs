@@ -4,7 +4,7 @@ use object_store::gcp::GoogleCloudStorageBuilder;
 use object_store::{path::Path as ObjectStorePath, ObjectStore};
 use parquet::arrow::arrow_reader::ParquetRecordBatchReaderBuilder;
 
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
 use std::sync::Arc;
 
 use crate::io::util::{
@@ -19,7 +19,7 @@ pub struct GcsReader {
 }
 
 impl GcsReader {
-    pub async fn new(path: &PathBuf, verbose: bool) -> Self {
+    pub async fn new(path: &Path, verbose: bool) -> Self {
         Self {
             verbose,
             bucket_name: get_bucket_name(path).unwrap(),
@@ -64,13 +64,13 @@ impl StorageReader for GcsReader {
                 if self.verbose {
                     println!("Failed to read GCS object {:?}, {}", &file_path, e);
                 }
-                return None;
+                None
             }
         }
     }
 }
 
-pub async fn get_file_list(p: &PathBuf, verbose: bool) -> Vec<PathBuf> {
+pub async fn get_file_list(p: &Path, verbose: bool) -> Vec<PathBuf> {
     let bucket_name = get_bucket_name(p).unwrap();
 
     if is_parquet_object_path(p) {
@@ -119,10 +119,8 @@ fn get_gcs_client(bucket_name: &String) -> Arc<dyn ObjectStore> {
         .with_bucket_name(bucket_name)
         .build();
 
-    let client = match builder {
+    match builder {
         Ok(client) => Arc::new(client),
         Err(e) => panic!("Failed to create GCS client, {}", e),
-    };
-
-    client
+    }
 }
