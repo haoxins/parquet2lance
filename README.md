@@ -12,6 +12,7 @@ Convert parquet files to [lance](https://github.com/eto-ai/lance)
 
 ```zsh
 $ cargo install parquet2lance
+$ parquet2lance --help
 ```
 
 ```
