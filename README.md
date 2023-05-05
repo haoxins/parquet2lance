@@ -36,6 +36,10 @@ Options:
 parquet2lance \
   -i gs://cloud-samples-data/bigquery/us-states/ \
   -o test.lance -O
+
+parquet2lance \
+  -i gs://cloud-samples-data/bigquery/us-states/us-states.parquet \
+  -o test.lance -O
 ```
 
 - Working with local FS
