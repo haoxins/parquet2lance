@@ -12,4 +12,7 @@ on:
 
 jobs:
   build:
+    defaults:
+      run:
+        working-directory: ./rust
     uses: haoxins/github-workflows/.github/workflows/rust.yaml@main
