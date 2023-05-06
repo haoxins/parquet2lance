@@ -1,12 +1,10 @@
 #![feature(async_fn_in_trait)]
 
 use clap::Parser;
-use lance::dataset::Dataset;
-use lance::dataset::{WriteMode, WriteParams};
 
-use std::path::{Path, PathBuf};
+use std::path::PathBuf;
 
-use io::reader::Reader;
+use io::Reader;
 mod io;
 
 #[derive(Parser, Debug)]
@@ -30,38 +28,5 @@ async fn main() {
     let args = Args::parse();
 
     let reader = Reader::new(&args.input, args.verbose).await;
-    p2l(reader, &args.output_dir, args.overwrite).await;
-}
-
-async fn p2l(mut reader: Reader, output_dir: &Path, overwrite: bool) {
-    let mut initialized = false;
-
-    while let Some(mut f) = reader.next().await {
-        let output_dir = output_dir.to_str().unwrap();
-
-        let write_params = get_write_params(initialized, overwrite);
-
-        Dataset::write(&mut f, output_dir, Some(write_params))
-            .await
-            .unwrap();
-
-        initialized = true;
-    }
-}
-
-fn get_write_params(initialized: bool, overwrite: bool) -> WriteParams {
-    let mut params = WriteParams::default();
-
-    if !initialized {
-        params.mode = if overwrite {
-            WriteMode::Overwrite
-        } else {
-            WriteMode::Create
-        };
-        return params;
-    }
-
-    params.mode = WriteMode::Append;
-
-    params
+    io::p2l(reader, &args.output_dir, args.overwrite).await;
 }
