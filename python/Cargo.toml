@@ -1,0 +1,13 @@
+[package]
+name = "p2l"
+version = "0.0.1"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib"]
+name = "parquet2lance"
+
+[dependencies]
+parquet2lance = { path = "../rust" }
+pyo3 = "0.18"
+tokio = { version = "1", features = ["full"] }

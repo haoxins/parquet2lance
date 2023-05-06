@@ -1,0 +1,27 @@
+[project]
+name = "parquet2lance"
+description = "The Python wrapper for the Rust parquet2lance"
+authors = [
+  { name = "Hao Xin", email = "haoxinst@gmail.com" }
+]
+readme = "README.md"
+license = { file = "LICENSE" }
+repository = "https://github.com/haoxins/parquet2lance"
+requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Rust",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
+]
+keywords = [
+    "arrow",
+    "lance",
+    "parquet",
+]
+
+[build-system]
+requires = ["maturin>=0.14,<0.15"]
+build-backend = "maturin"
+
+[tool.maturin]
+features = ["pyo3/extension-module"]
