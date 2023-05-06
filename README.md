@@ -9,6 +9,28 @@
 [![crates.io badge]][crates.io]
 
 - Convert parquet files to [lance](https://github.com/eto-ai/lance)
-  - [Python library](./python)
-  - [CLI](./rust)
+  - [Python bindings (PyO3)](./python)
+  - [CLI and Rust core](./rust)
+
+```zsh
+$ cargo install parquet2lance
+```
+
+```zsh
+$ parquet2lance --help
+```
+
+```
+Convert parquet files to lance
+
+Usage: parquet2lance [OPTIONS] --input <INPUT> --output-dir <OUTPUT_DIR>
+
+Options:
+  -i, --input <INPUT>            Input file or directory
+  -o, --output-dir <OUTPUT_DIR>  Output directory
+  -O, --overwrite                Overwrite output directory
+      --verbose                  Print internal logs
+  -h, --help                     Print help
+  -V, --version                  Print version
+```
 
