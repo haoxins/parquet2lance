@@ -50,11 +50,15 @@ pub fn get_object_prefix(p: &Path) -> Option<ObjectStorePath> {
 
     let size = dirs.len();
 
-    if size <= 2 {
+    if size < 2 {
         return None;
     }
 
-    let prefix = dirs[1..size - 1].join("/");
+    let prefix = if dirs.last().unwrap().contains('.') {
+        dirs[1..size - 1].join("/")
+    } else {
+        dirs[1..].join("/")
+    };
 
     Some(ObjectStorePath::from(prefix))
 }
@@ -86,6 +90,14 @@ mod util_tests {
     fn test_get_object_prefix() {
         assert_eq!(
             get_object_prefix(&PathBuf::from("gs://public-data/parquet/a.parquet")).unwrap(),
+            ObjectStorePath::from("parquet")
+        );
+        assert_eq!(
+            get_object_prefix(&PathBuf::from("gs://public-data/parquet/a")).unwrap(),
+            ObjectStorePath::from("parquet/a")
+        );
+        assert_eq!(
+            get_object_prefix(&PathBuf::from("gs://public-data/parquet")).unwrap(),
             ObjectStorePath::from("parquet")
         );
         assert_eq!(get_object_prefix(&PathBuf::from("gs://public-data")), None);
