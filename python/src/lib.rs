@@ -15,6 +15,7 @@ fn p2l(input: String, output: String) -> PyResult<()> {
 }
 
 #[pymodule]
+#[pyo3(name = "parquet2lance")]
 fn python(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(p2l, m)?)?;
     Ok(())
