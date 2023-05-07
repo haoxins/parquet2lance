@@ -1,8 +1,7 @@
 target
 Cargo.lock
 
-__pycache__
-*.py[cod]
 .venv
-
-testdata
+.python-version
+python/requirements-dev.lock
+python/requirements.lock
