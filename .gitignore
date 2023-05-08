@@ -3,5 +3,5 @@ Cargo.lock
 
 .venv
 .python-version
-python/requirements-dev.lock
-python/requirements.lock
+requirements-dev.lock
+requirements.lock
