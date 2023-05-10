@@ -1,6 +1,6 @@
 [package]
 name = "parquet2lance"
-version = "0.2.0"
+version = "0.2.1"
 edition = "2021"
 description = "Convert parquet files to lance"
 repository = "https://github.com/haoxins/parquet2lance"
@@ -12,7 +12,7 @@ arrow = { version = "37.0", features = ["prettyprint"] }
 arrow-array = "37.0"
 clap = { version = "4", features = ["derive"] }
 futures = "0.3"
-lance = "0.4.6"
+lance = "0.4.8"
 object_store = { version = "0.5", features = ["aws", "gcp"] }
 parquet = "37"
 rayon = "1"
