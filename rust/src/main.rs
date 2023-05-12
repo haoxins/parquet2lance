@@ -10,16 +10,27 @@ mod io;
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
 struct Args {
-    #[arg(short, long, help = "Input file or directory")]
+    #[arg(short = 'i', long, help = "Input file or directory")]
     input: PathBuf,
 
-    #[arg(short, long, help = "Output directory")]
+    #[arg(short = 'o', long, help = "Output directory")]
     output_dir: PathBuf,
+
+    #[arg(
+        short = 'p',
+        long,
+        default_value = "1",
+        help = "The parallelism of the conversion"
+    )]
+    parallelism: i32,
 
     #[arg(short = 'O', long, help = "Overwrite output directory")]
     overwrite: bool,
 
-    #[arg(long, help = "Print internal logs")]
+    #[arg(short = 'C', long, help = "Continue on failure (skip invalid files)")]
+    continue_on_failure: bool,
+
+    #[arg(short = 'v', long, help = "Print internal logs")]
     verbose: bool,
 }
 
