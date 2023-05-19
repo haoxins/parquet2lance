@@ -12,7 +12,7 @@ arrow = { version = "37", features = ["prettyprint"] }
 arrow-array = "37"
 clap = { version = "4", features = ["derive"] }
 futures = "0.3"
-lance = { git = "https://github.com/eto-ai/lance", rev = "6af670a" }
+lance = "0.4"
 object_store = { version = "0.5", features = ["aws", "gcp"] }
 parquet = "37"
 rayon = "1"
