@@ -23,9 +23,20 @@ pub async fn p2l(mut reader: Reader, output_dir: &Path, overwrite: bool) {
 
         let write_params = get_write_params(initialized, overwrite);
 
-        Dataset::write(&mut f, output_dir, Some(write_params))
-            .await
-            .unwrap();
+        let result = Dataset::write(&mut f, output_dir, Some(write_params)).await;
+
+        match result {
+            Ok(_) => (),
+            Err(e) => {
+                if e.to_string()
+                    .contains("Attempt to write empty record batches")
+                {
+                    println!("Empty record, skipping");
+                    continue;
+                }
+                panic!("Error writing record: {:?}", e);
+            }
+        }
 
         initialized = true;
     }
