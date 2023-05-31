@@ -1,6 +1,7 @@
 use arrow_array::RecordBatchReader;
 use lance::dataset::Dataset;
 use lance::dataset::{WriteMode, WriteParams};
+use lance::Error;
 
 use std::path::Path;
 
@@ -27,13 +28,11 @@ pub async fn p2l(mut reader: Reader, output_dir: &Path, overwrite: bool) {
 
         match result {
             Ok(_) => (),
+            Err(Error::EmptyDataset) => {
+                println!("Empty dataset, skipping");
+                continue;
+            }
             Err(e) => {
-                if e.to_string()
-                    .contains("Attempt to write empty record batches")
-                {
-                    println!("Empty record, skipping");
-                    continue;
-                }
                 panic!("Error writing record: {:?}", e);
             }
         }
