@@ -10,8 +10,7 @@ repository = "https://github.com/haoxins/parquet2lance"
 requires-python = ">=3.10"
 classifiers = [
   "Programming Language :: Rust",
-  "Programming Language :: Python :: 3.11",
-  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3",
 ]
 keywords = [
   "arrow",
@@ -19,9 +18,9 @@ keywords = [
   "parquet",
 ]
 
-[build-system]
-requires = ["maturin>=0.14,<0.15"]
-build-backend = "maturin"
-
 [tool.maturin]
 features = ["pyo3/extension-module"]
+
+[build-system]
+requires = ["maturin>=1.0,<2.0"]
+build-backend = "maturin"
