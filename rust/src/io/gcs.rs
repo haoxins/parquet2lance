@@ -1,8 +1,9 @@
-use arrow_array::RecordBatchReader;
 use futures::stream::StreamExt;
 use object_store::gcp::GoogleCloudStorageBuilder;
 use object_store::{path::Path as ObjectStorePath, ObjectStore};
+use parquet::arrow::arrow_reader::ParquetRecordBatchReader;
 use parquet::arrow::arrow_reader::ParquetRecordBatchReaderBuilder;
+use parquet::errors::{ParquetError, Result as ParquetResult};
 
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
@@ -29,9 +30,9 @@ impl GcsReader {
 }
 
 impl StorageReader for GcsReader {
-    async fn next(&mut self) -> Option<Box<dyn RecordBatchReader>> {
+    async fn next(&mut self) -> ParquetResult<ParquetRecordBatchReader> {
         if self.file_list.is_empty() {
-            return None;
+            return ParquetResult::Err(ParquetError::General("No more files".to_string()));
         }
 
         let file_path = self.file_list.remove(0);
@@ -53,20 +54,10 @@ impl StorageReader for GcsReader {
             println!("Read GCS object {:?}", &file_path);
         }
 
-        let result = ParquetRecordBatchReaderBuilder::try_new(data)
+        return ParquetRecordBatchReaderBuilder::try_new(data)
             .unwrap()
             .with_batch_size(8192)
             .build();
-
-        match result {
-            Ok(v) => Some(Box::new(v)),
-            Err(e) => {
-                if self.verbose {
-                    println!("Failed to read GCS object {:?}, {}", &file_path, e);
-                }
-                None
-            }
-        }
     }
 }
 
@@ -81,7 +72,7 @@ pub async fn get_file_list(p: &Path, verbose: bool) -> Vec<PathBuf> {
     let client = get_gcs_client(&bucket_name);
 
     if verbose {
-        println!("Getting GCS objects from {}", &prefix);
+        println!("Getting GCS objects from {:?}", &prefix);
     }
 
     let objects = client.list(Some(&prefix)).await.unwrap();
@@ -92,7 +83,7 @@ pub async fn get_file_list(p: &Path, verbose: bool) -> Vec<PathBuf> {
         let ignored = !p.ends_with(".parquet") || meta.size == 0;
 
         if verbose {
-            println!("Found file {}, ignored {}", &p, &ignored);
+            println!("Found file {:?}, ignored {:?}", &p, &ignored);
         }
 
         match ignored {
@@ -108,7 +99,7 @@ pub async fn get_file_list(p: &Path, verbose: bool) -> Vec<PathBuf> {
         .collect();
 
     if verbose {
-        println!("Found {} files", &objects.len());
+        println!("Found {:?} files", &objects.len());
     }
 
     objects
@@ -121,6 +112,6 @@ fn get_gcs_client(bucket_name: &String) -> Arc<dyn ObjectStore> {
 
     match builder {
         Ok(client) => Arc::new(client),
-        Err(e) => panic!("Failed to create GCS client, {}", e),
+        Err(e) => panic!("Failed to create GCS client, {:?}", e),
     }
 }

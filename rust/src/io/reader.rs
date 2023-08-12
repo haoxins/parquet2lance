@@ -1,4 +1,5 @@
-use arrow_array::RecordBatchReader;
+use parquet::arrow::arrow_reader::ParquetRecordBatchReader;
+use parquet::errors::Result as ParquetResult;
 
 use std::path::PathBuf;
 
@@ -35,7 +36,7 @@ impl Reader {
         }
     }
 
-    pub async fn next(&mut self) -> Option<Box<dyn RecordBatchReader>> {
+    pub async fn next(&mut self) -> ParquetResult<ParquetRecordBatchReader> {
         match self.scheme {
             FileScheme::FS => self.fs_reader.as_mut().unwrap().next().await,
             FileScheme::Gcs => self.gcs_reader.as_mut().unwrap().next().await,
