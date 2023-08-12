@@ -1,5 +1,6 @@
-use arrow_array::RecordBatchReader;
+use parquet::arrow::arrow_reader::ParquetRecordBatchReader;
 use parquet::arrow::arrow_reader::ParquetRecordBatchReaderBuilder;
+use parquet::errors::{ParquetError, Result as ParquetResult};
 
 use std::fs::read_dir;
 use std::fs::File;
@@ -22,9 +23,9 @@ impl FsReader {
 }
 
 impl StorageReader for FsReader {
-    async fn next(&mut self) -> Option<Box<dyn RecordBatchReader>> {
+    async fn next(&mut self) -> ParquetResult<ParquetRecordBatchReader> {
         if self.file_list.is_empty() {
-            return None;
+            return ParquetResult::Err(ParquetError::General("No more files".to_string()));
         }
 
         let file_path = self.file_list.remove(0);
@@ -33,15 +34,10 @@ impl StorageReader for FsReader {
         }
         let file = File::open(file_path).unwrap();
 
-        let r = Box::new(
-            ParquetRecordBatchReaderBuilder::try_new(file)
-                .unwrap()
-                .with_batch_size(8192)
-                .build()
-                .unwrap(),
-        );
-
-        Some(r)
+        return ParquetRecordBatchReaderBuilder::try_new(file)
+            .unwrap()
+            .with_batch_size(8192)
+            .build();
     }
 }
 

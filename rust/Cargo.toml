@@ -1,6 +1,6 @@
 [package]
 name = "parquet2lance"
-version = "0.2.6"
+version = "0.3.0"
 edition = "2021"
 description = "Convert parquet files to lance"
 repository = "https://github.com/haoxins/parquet2lance"
@@ -8,11 +8,9 @@ license-file = "LICENSE"
 keywords = ["parquet", "lance", "object_store", "gcs"]
 
 [dependencies]
-arrow = { version = "42", features = ["prettyprint"] }
-arrow-array = "42"
 clap = { version = "4", features = ["derive"] }
-futures = "0.3"
-lance = "0.5.10"
-object_store = { version = "0.6", features = ["aws", "gcp"] }
-parquet = "42"
+futures = "0.3.27"
+lance = "0.6.1"
+object_store = { version = "0.6.1", features = ["aws", "gcp"] }
+parquet = "43.0"
 tokio = { version = "1", features = ["full"] }
