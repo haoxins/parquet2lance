@@ -33,7 +33,3 @@ Options:
   -h, --help                     Print help
   -V, --version                  Print version
 ```
-
-- The comparisons base on my data
-  - Parquet files `1406 G`
-  - Lance (data) files `2296 G`
