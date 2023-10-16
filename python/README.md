@@ -1,2 +1,2 @@
 
-- Convert parquet files to [lance](https://github.com/eto-ai/lance)
+- Convert parquet files to [lance](https://github.com/lancedb/lance)

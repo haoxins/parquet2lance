@@ -1,5 +1,3 @@
-#![feature(async_fn_in_trait)]
-
 use clap::Parser;
 
 use std::path::PathBuf;

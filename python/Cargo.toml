@@ -1,6 +1,6 @@
 [package]
 name = "p2l"
-version = "0.3.2"
+version = "0.3.3"
 edition = "2021"
 
 [lib]
@@ -9,5 +9,5 @@ name = "parquet2lance"
 
 [dependencies]
 parquet2lance = { path = "../rust" }
-pyo3 = "0.19"
+pyo3 = "0.20"
 tokio = { version = "1", features = ["full"] }
