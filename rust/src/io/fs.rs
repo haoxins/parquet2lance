@@ -17,8 +17,28 @@ impl FsReader {
     pub fn new(path: &PathBuf, verbose: bool) -> Self {
         Self {
             verbose,
-            file_list: get_file_list(path),
+            file_list: Self::get_file_list(path),
         }
+    }
+
+    fn get_file_list(input: &PathBuf) -> Vec<PathBuf> {
+        let mut file_list = vec![];
+
+        if input.is_file() {
+            file_list.push(input.clone());
+        }
+
+        if input.is_dir() {
+            let mut dir = read_dir(input).unwrap();
+            while let Some(Ok(entry)) = dir.next() {
+                // We don't handle directories yet
+                if entry.path().is_file() {
+                    file_list.push(entry.path());
+                }
+            }
+        }
+
+        file_list
     }
 }
 
@@ -39,24 +59,4 @@ impl StorageReader for FsReader {
             .with_batch_size(8192)
             .build();
     }
-}
-
-fn get_file_list(input: &PathBuf) -> Vec<PathBuf> {
-    let mut file_list = vec![];
-
-    if input.is_file() {
-        file_list.push(input.clone());
-    }
-
-    if input.is_dir() {
-        let mut dir = read_dir(input).unwrap();
-        while let Some(Ok(entry)) = dir.next() {
-            // We don't handle directories yet
-            if entry.path().is_file() {
-                file_list.push(entry.path());
-            }
-        }
-    }
-
-    file_list
 }
