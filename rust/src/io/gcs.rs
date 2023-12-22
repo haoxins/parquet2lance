@@ -42,7 +42,7 @@ impl GcsReader {
             println!("Getting GCS objects from {:?}", &prefix);
         }
 
-        let objects = client.list(Some(&prefix)).await.unwrap();
+        let objects = client.list(Some(&prefix));
 
         let objects = objects.map(|meta| {
             let meta = meta.unwrap();
