@@ -18,12 +18,11 @@ jobs:
       run:
         working-directory: ./rust
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions-rs/toolchain@v1
+    - uses: actions/checkout@v4
+    - run: rustup toolchain install stable --profile minimal
+    - uses: Swatinem/rust-cache@v2
       with:
-        toolchain: stable
-        override: true
-        components: clippy, rustfmt
+        workspaces: "rust"
     - name: Install dependencies
       run: |
         sudo apt update
