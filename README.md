@@ -1,15 +1,18 @@
-## parquet2lance
+[Workflow Rust link]: https://github.com/haoxins/parquet2lance/actions/workflows/rust.yaml
+[Workflow Rust badge]: https://github.com/haoxins/parquet2lance/actions/workflows/rust.yaml/badge.svg
+[Workflow Python link]: https://github.com/haoxins/parquet2lance/actions/workflows/python.yaml
+[Workflow Python badge]: https://github.com/haoxins/parquet2lance/actions/workflows/python.yaml/badge.svg
+[Crate link]: https://crates.io/crates/parquet2lance
+[Crate badge]: https://img.shields.io/crates/v/parquet2lance.svg
+[PyPI link]: https://pypi.org/project/parquet2lance/
+[PyPI badge]: https://img.shields.io/pypi/v/parquet2lance.svg
 
-[CI]: https://github.com/haoxins/parquet2lance/actions/workflows/rust.yaml
-[CI Badge]: https://github.com/haoxins/parquet2lance/actions/workflows/rust.yaml/badge.svg
-[crates.io]: https://crates.io/crates/parquet2lance
-[crates.io badge]: https://img.shields.io/crates/v/parquet2lance.svg
-[pypi.org]: https://pypi.org/project/parquet2lance/
-[pypi.org badge]: https://img.shields.io/pypi/v/parquet2lance.svg
+[![Workflow Rust badge]][Workflow Rust link]
+[![Workflow Python badge]][Workflow Python link]
+[![Crate badge]][Crate link]
+[![PyPI badge]][PyPI link]
 
-[![CI Badge]][CI]
-[![crates.io badge]][crates.io]
-[![pypi.org badge]][pypi.org]
+### parquet2lance
 
 - Convert parquet files to [lance](https://github.com/eto-ai/lance)
   - [Python bindings (PyO3)](./python)

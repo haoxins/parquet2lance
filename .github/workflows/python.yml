@@ -1,0 +1,33 @@
+name: Python
+
+on:
+  push:
+    branches:
+    - main
+    tags:
+    - "*"
+  pull_request:
+    branches:
+    - main
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
+      with:
+        python-version: "3.12"
+    - name: Build wheels
+      uses: PyO3/maturin-action@v1
+      with:
+        working-directory: ./python
+        before-script-linux: |
+          sudo apt update
+          sudo apt install -y protobuf-compiler libssl-dev
+        args: --release --out dist --find-interpreter
+        sccache: "true"

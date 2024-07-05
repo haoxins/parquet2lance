@@ -1,13 +1,15 @@
 [package]
-name = "p2l"
-version = "0.4.2"
+name = "_"
+version = "0.4.3"
 edition = "2021"
+repository = "https://github.com/haoxins/parquet2lance"
+publish = false
 
 [lib]
-crate-type = ["cdylib"]
 name = "parquet2lance"
+crate-type = ["cdylib"]
 
 [dependencies]
 parquet2lance = { path = "../rust" }
-pyo3 = "0.21"
+pyo3 = "0.22"
 tokio = { version = "1", features = ["full"] }
