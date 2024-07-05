@@ -3,6 +3,7 @@ name = "_"
 version = "0.4.3"
 edition = "2021"
 repository = "https://github.com/haoxins/parquet2lance"
+publish = false
 
 [lib]
 name = "parquet2lance"
