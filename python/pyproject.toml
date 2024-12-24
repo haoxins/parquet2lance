@@ -3,7 +3,7 @@ name = "parquet2lance"
 description = "The Python wrapper for the Rust parquet2lance"
 readme = "README.md"
 license = { file = "LICENSE" }
-requires-python = ">=3.11"
+requires-python = ">=3.12"
 classifiers = [
   "Programming Language :: Rust",
   "Programming Language :: Python :: Implementation :: CPython",

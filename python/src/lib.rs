@@ -1,4 +1,4 @@
-use parquet2lance::io::{p2l as _p2l, Reader};
+use parquet2lance::io::{Reader, p2l as _p2l};
 use pyo3::prelude::*;
 use tokio;
 

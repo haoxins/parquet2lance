@@ -2,8 +2,8 @@ use parquet::arrow::arrow_reader::ParquetRecordBatchReader;
 use parquet::arrow::arrow_reader::ParquetRecordBatchReaderBuilder;
 use parquet::errors::{ParquetError, Result as ParquetResult};
 
-use std::fs::read_dir;
 use std::fs::File;
+use std::fs::read_dir;
 use std::path::PathBuf;
 
 use crate::io::StorageReader;
