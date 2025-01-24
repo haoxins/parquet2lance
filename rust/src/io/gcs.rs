@@ -1,6 +1,6 @@
 use futures::stream::StreamExt;
 use object_store::gcp::GoogleCloudStorageBuilder;
-use object_store::{path::Path as ObjectStorePath, ObjectStore};
+use object_store::{ObjectStore, path::Path as ObjectStorePath};
 use parquet::arrow::arrow_reader::ParquetRecordBatchReader;
 use parquet::arrow::arrow_reader::ParquetRecordBatchReaderBuilder;
 use parquet::errors::{ParquetError, Result as ParquetResult};
@@ -8,10 +8,10 @@ use parquet::errors::{ParquetError, Result as ParquetResult};
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
 
+use crate::io::StorageReader;
 use crate::io::util::{
     get_bucket_name, get_object_path, get_object_prefix, is_parquet_object_path,
 };
-use crate::io::StorageReader;
 
 pub struct GcsReader {
     verbose: bool,

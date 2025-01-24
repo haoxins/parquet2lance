@@ -21,11 +21,12 @@ jobs:
     - uses: actions/checkout@v4
     - uses: actions/setup-python@v5
       with:
-        python-version: "3.12"
+        python-version: "3.13"
     - name: Build wheels
       uses: PyO3/maturin-action@v1
       with:
         working-directory: ./python
+        rust-toolchain: nightly
         before-script-linux: |
           sudo apt update
           sudo apt install -y protobuf-compiler libssl-dev
