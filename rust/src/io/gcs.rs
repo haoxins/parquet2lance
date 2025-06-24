@@ -35,35 +35,32 @@ impl GcsReader {
             return vec![get_object_path(p).unwrap()];
         }
 
-        let prefix = get_object_prefix(p).unwrap();
+        let prefix = get_object_prefix(p);
         let client = Self::get_gcs_client(&bucket_name);
 
         if verbose {
-            println!("Getting GCS objects from {:?}", &prefix);
+            println!("Getting GCS objects from {:?}/{:?}", &bucket_name, &prefix.as_ref().unwrap());
         }
 
-        let objects = client.list(Some(&prefix));
+        let objects = client
+            .list(prefix.as_ref())
+            .filter_map(|meta_result| async {
+                let meta = meta_result.ok()?;
+                let p = meta.location.to_string();
+                let is_valid = p.ends_with(".parquet") && meta.size > 0;
 
-        let objects = objects.map(|meta| {
-            let meta = meta.unwrap();
-            let p = meta.location.to_string();
-            let ignored = !p.ends_with(".parquet") || meta.size == 0;
+                if verbose {
+                    println!("Found file {:?}, valid: {:?}", &p, is_valid);
+                }
 
-            if verbose {
-                println!("Found file {:?}, ignored {:?}", &p, &ignored);
-            }
-
-            match ignored {
-                true => PathBuf::from(""),
-                false => PathBuf::from(p),
-            }
-        });
-
-        let objects: Vec<PathBuf> = objects.collect().await;
-        let objects: Vec<PathBuf> = objects
-            .into_iter()
-            .filter(|p| !p.to_str().unwrap().is_empty())
-            .collect();
+                if is_valid {
+                    Some(PathBuf::from(p))
+                } else {
+                    None
+                }
+            })
+            .collect::<Vec<PathBuf>>()
+            .await;
 
         if verbose {
             println!("Found {:?} files", &objects.len());

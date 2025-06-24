@@ -1,6 +1,6 @@
 [package]
 name = "parquet2lance"
-version = "0.5.0"
+version = "0.6.0"
 edition = "2024"
 description = "Convert parquet files to lance"
 repository = "https://github.com/haoxins/parquet2lance"
@@ -10,7 +10,11 @@ keywords = ["parquet", "lance", "object_store"]
 [dependencies]
 clap = { version = "4", features = ["derive"] }
 futures = "0.3"
-lance = "0.22"
-object_store = { version = "0.10.2", features = ["aws", "azure", "gcp"] }
-parquet = "53.0"
+lance = "0.30"
+object_store = { version = "0.11.0", features = [
+  "aws",
+  "azure",
+  "gcp"
+] }
+parquet = "55.1"
 tokio = { version = "1", features = ["full"] }
